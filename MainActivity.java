@@ -158,19 +158,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK){
-                Toast.makeText(this,"링크 추가",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"링크 추가",Toast.LENGTH_SHORT).show();
                 openFolder(currentPath);
             }
             return;
         }else if (requestCode == 2){
             if (resultCode == RESULT_OK){
-                Toast.makeText(this,"폴더 추가",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"폴더 추가",Toast.LENGTH_SHORT).show();
                 openFolder(currentPath);
             }
             return;
         }else if (requestCode == 3){
             if (resultCode == RESULT_OK){
-                Toast.makeText(this,"링크/폴더 삭제",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"링크/폴더 삭제",Toast.LENGTH_SHORT).show();
                 deleteCheckedFile(currentPath);
                 openFolder(currentPath);
             }
