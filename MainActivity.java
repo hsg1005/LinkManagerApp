@@ -106,14 +106,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()){
             case android.R.id.home:
                 currentPath = homePath;
+                AppStatus.selectMode = false;
                 openFolder(currentPath);
                 return true;
 
             case R.id.btn_select_item:
-                AppStatus.selectMode = true;
-                SparseBooleanArray checkedItems = lvItem.getCheckedItemPositions();
-                arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_multiple_choice, lItem);
-                lvItem.setAdapter(arrayAdapter);
+                if (AppStatus.selectMode == false){
+                    AppStatus.selectMode = true;
+                    SparseBooleanArray checkedItems = lvItem.getCheckedItemPositions();
+                    arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_multiple_choice, lItem);
+                    lvItem.setAdapter(arrayAdapter);
+                }else {
+                    AppStatus.selectMode = false;
+                    openFolder(currentPath);
+                }
+
 
                 return true;
         }
@@ -148,6 +155,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_update:
+                if (AppStatus.selectMode == true){
+                    // 1개 이상을 선택한 경우
+                    if(lvItem.getCheckedItemCount() > 1){
+                        Toast.makeText(context,"한 개의 파일만 선택하세요.",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        File f = new File(lPath.get(lvItem.getCheckedItemPosition()).toString());
+
+                        if (f.isDirectory()){
+
+                        }
+                        else{
+                            intent = new Intent(context, UpdateLinkActivity.class);
+                            intent.putExtra("name",f.getName().toString);
+                            intent.putExtra("path", readLink(f.getAbsolutePath()).toString);
+                            startActivityForResult(intent,4);
+                        }
+                    }
+
+                }
 
                 break;
         }
@@ -168,20 +195,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 openFolder(currentPath);
             }
             return;
-        }else if (requestCode == 3){
-            if (resultCode == RESULT_OK){
-                Toast.makeText(context,"링크/폴더 삭제",Toast.LENGTH_SHORT).show();
+        }else if (requestCode == 3) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(context, "링크/폴더 삭제", Toast.LENGTH_SHORT).show();
                 deleteCheckedFile(currentPath);
                 openFolder(currentPath);
             }
             AppStatus.selectMode = false;
             return;
-
+        }else if (requestCode == 4){
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(context,"링크 편집",Toast.LENGTH_SHORT).show();
+                openFolder(currentPath);
+            }
+            AppStatus.selectMode = false;
+            return;
         }
     }
 
-    public void openLink(String Path){
-        File f = new File(Path) ;
+    public String readLink(String path){
+        File f = new File(path) ;
         FileReader fr = null ;
         StringBuilder sb = new StringBuilder();
         int data ;
@@ -197,12 +230,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace() ;
         }
+
         String url = null;
 
         if(sb.substring(0,4) != "http")
             url = "http://" + sb.toString();
         else
             url = sb.toString();
+
+        return url;
+    } //end of readLink
+
+    public void openLink(String path){
+        String url = readLink(path);
 
         Toast.makeText(context,url,Toast.LENGTH_SHORT).show();
 
@@ -214,16 +254,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //}
     } //end of openLink
 
-    public void openFolder(String Path) {
-        tvPath.setText("Location: " + Path);
+    public void openFolder(String path) {
+        tvPath.setText("Location: " + path);
 
         lItem = new ArrayList<String>();
         lPath = new ArrayList<String>();
 
-        File f = new File(Path);
+        File f = new File(path);
         File[] files = f.listFiles();
 
-        if (!homePath.equals(Path)) {
+        if (!homePath.equals(path)) {
             lItem.add("이전 폴더로 가기.."); //to parent folder
             lPath.add(f.getParent());
         }
@@ -242,7 +282,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lvItem.setAdapter(arrayAdapter);
     } // end of openFolder
 
-    public void deleteCheckedFile(String Path) {
+    /*public void updateCheckedFile(String path){
+        int count = arrayAdapter.getCount();
+        if(count > 1){
+            Toast.makeText(context,"한 개의 파일만 선택하세요.",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            int checkedItem = lvItem.getCheckedItemPosition();
+            File f = new File(lPath.get(checkedItem).toString());
+            if(f.exists()){
+                f.get
+            }
+        }
+        lvItem.clearChoices();
+    }*/
+
+    public void deleteCheckedFile(String path) {
         SparseBooleanArray checkedItems = lvItem.getCheckedItemPositions();
 
         int count = arrayAdapter.getCount();
@@ -258,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         // 모든 선택 상태 초기화
-        lvItem.clearChoices() ;
+        //lvItem.clearChoices() ;
         //arrayAdapter.notifyDataSetChanged();
     }
 
