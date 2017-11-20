@@ -29,7 +29,7 @@ public class DeleteFileActivity extends Activity {
         btnDeleteFileCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
+                Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();
             }
@@ -38,7 +38,7 @@ public class DeleteFileActivity extends Activity {
         btnDeleteFileOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
+                Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }

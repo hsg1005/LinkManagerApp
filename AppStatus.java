@@ -6,4 +6,7 @@ package com.example.myapplication;
 
 public class AppStatus {
     public static boolean selectMode = false;
+    public static String name = null;
+    public static String url = null;
+    public static String path = null;
 }

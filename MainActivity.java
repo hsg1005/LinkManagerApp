@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +34,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public ArrayAdapter<String> arrayAdapter;
     public TextView tvPath;
     public ListView lvItem;
-
     public Button btnAddLink;
     public Button btnAddFolder;
     public Button btnUpdate;
     public Button btnDelete;
 
     public String appName = "허허실실";
-    public String homePath;
-    public static String currentPath ;
+    public String homePath = null;
+    public static String currentPath = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else { //파일이 폴더가 아니면
                     if (file.canRead())
-                        openLink(currentPath = lPath.get(position));
+                        openLink(lPath.get(position));
                     else
                         Toast.makeText(context, "파일을 열 수 없음", Toast.LENGTH_SHORT).show();
                 }
@@ -113,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_select_item:
                 if (AppStatus.selectMode == false){
                     AppStatus.selectMode = true;
-                    SparseBooleanArray checkedItems = lvItem.getCheckedItemPositions();
                     arrayAdapter = new ArrayAdapter<String>(context,android.R.layout.simple_list_item_multiple_choice, lItem);
                     lvItem.setAdapter(arrayAdapter);
                 }else {
@@ -156,20 +156,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.btn_update:
                 if (AppStatus.selectMode == true){
+                    int count = 0;
+                    int key = 0;
+
+                    for (int i = 0; i < lvItem.getCount(); i++){
+                        if (lvItem.isItemChecked(i)){
+                            count++;
+                            key = i;
+                        }
+                    }
+
+
                     // 1개 이상을 선택한 경우
-                    if(lvItem.getCheckedItemCount() > 1){
+                    if(count > 1){
                         Toast.makeText(context,"한 개의 파일만 선택하세요.",Toast.LENGTH_SHORT).show();
                     }
                     else{
-                        File f = new File(lPath.get(lvItem.getCheckedItemPosition()).toString());
+                        int position = lvItem.getCheckedItemPosition();
+                        File f = new File(lPath.get(key).toString());
 
                         if (f.isDirectory()){
 
                         }
                         else{
                             intent = new Intent(context, UpdateLinkActivity.class);
-                            intent.putExtra("name",f.getName().toString);
-                            intent.putExtra("path", readLink(f.getAbsolutePath()).toString);
+                            intent.putExtra("name",f.getName().toString());
+                            intent.putExtra("url", readLink(f.getAbsolutePath()).toString());
                             startActivityForResult(intent,4);
                         }
                     }
@@ -199,16 +211,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK) {
                 Toast.makeText(context, "링크/폴더 삭제", Toast.LENGTH_SHORT).show();
                 deleteCheckedFile(currentPath);
-                openFolder(currentPath);
             }
+            lvItem.clearChoices();
             AppStatus.selectMode = false;
+            openFolder(currentPath);
             return;
+
         }else if (requestCode == 4){
             if (resultCode == RESULT_OK) {
                 Toast.makeText(context,"링크 편집",Toast.LENGTH_SHORT).show();
-                openFolder(currentPath);
+                deleteCheckedFile(currentPath);
+                writeLink(currentPath, AppStatus.name, AppStatus.url);
+                AppStatus.name = null;
+                AppStatus.url = null;
             }
+            lvItem.clearChoices();
             AppStatus.selectMode = false;
+            openFolder(currentPath);
             return;
         }
     }
@@ -231,15 +250,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace() ;
         }
 
-        String url = null;
+        String url = sb.toString();
 
-        if(sb.substring(0,4) != "http")
-            url = "http://" + sb.toString();
-        else
-            url = sb.toString();
+        if(!(url.substring(0,4).equals("http")))
+            url = "http://" + url;
 
         return url;
     } //end of readLink
+
+    public void writeLink(String path, String name, String url){
+        File f = new File(path + "/" + name + "") ;
+        FileWriter fw = null ;
+        String text = url;
+
+        try {
+            fw = new FileWriter(f) ;
+            fw.write(text) ;
+
+        } catch (Exception e) {
+            e.printStackTrace() ;
+        }
+
+        if (fw != null) {
+            // catch Exception here or throw.
+            try {
+                fw.close() ;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void openLink(String path){
         String url = readLink(path);

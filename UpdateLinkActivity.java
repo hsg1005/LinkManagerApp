@@ -35,16 +35,15 @@ public class UpdateLinkActivity extends Activity {
         btnUpdateLinkOk = (Button)findViewById(R.id.btn_update_link_ok);
         btnUpdateLinkCancel = (Button)findViewById(R.id.btn_update_link_cancel);
 
-        Intent intent = new Intent();
+        final Intent intent = getIntent();
 
         editText1.setText(intent.getStringExtra("name"));
-        editText2.setText(intent.getStringExtra("path"));
+        editText2.setText(intent.getStringExtra("url"));
 
         btnUpdateLinkCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_CANCELED, returnIntent);
+                setResult(Activity.RESULT_CANCELED, intent);
                 finish();
             }
         });
@@ -52,8 +51,7 @@ public class UpdateLinkActivity extends Activity {
         btnUpdateLinkOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                File f = new File(MainActivity.currentPath + "/" + editText1.getText().toString() + ".txt") ;
+                File f = new File(MainActivity.currentPath + "/" + editText1.getText().toString() + "") ;
                 FileWriter fw = null ;
                 String text = editText2.getText().toString();
 
@@ -74,8 +72,10 @@ public class UpdateLinkActivity extends Activity {
                     }
                 }
 
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_OK, returnIntent);
+                AppStatus.name = editText1.getText().toString();
+                AppStatus.url = editText2.getText().toString();
+
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });

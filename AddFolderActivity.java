@@ -34,7 +34,7 @@ public class AddFolderActivity extends Activity {
         btnAddFolderCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
+                Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();
             }
@@ -46,7 +46,7 @@ public class AddFolderActivity extends Activity {
                 File f = new File(MainActivity.currentPath, editText.getText().toString());
                 f.mkdir();
 
-                Intent returnIntent = new Intent();
+                Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
