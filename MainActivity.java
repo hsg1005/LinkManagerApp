@@ -272,7 +272,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (fw != null) {
-            // catch Exception here or throw.
             try {
                 fw.close() ;
             } catch (Exception e) {
