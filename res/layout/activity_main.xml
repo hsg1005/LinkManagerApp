@@ -6,16 +6,16 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/tvPath"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
-
-    <ListView
-        android:id="@+id/lvFileControl"
-        android:layout_weight="10"
+        android:id="@+id/tv_path"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <ListView
+        android:id="@+id/lv_item"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:choiceMode="multipleChoice" />
 
     <LinearLayout
@@ -29,28 +29,28 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:background="@drawable/greenbutton"
+            android:background="@drawable/red_b"
             android:text="새 링크"/>
         <Button
             android:id="@+id/btn_add_folder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:background="@drawable/greenbutton"
+            android:background="@drawable/yellow_b"
             android:text="새 폴더"/>
         <Button
             android:id="@+id/btn_update"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:background="@drawable/greenbutton"
+            android:background="@drawable/green_b"
             android:text="편집" />
         <Button
             android:id="@+id/btn_delete"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:background="@drawable/greenbutton"
+            android:background="@drawable/blue_b"
             android:text="삭제" />
 
     </LinearLayout>

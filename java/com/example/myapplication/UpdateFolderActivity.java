@@ -16,48 +16,43 @@ import java.io.FileWriter;
  * Created by 성욱 on 2017-11-05.
  */
 
-public class UpdateLinkActivity extends Activity {
-
-    Button btnUpdateLinkOk;
-    Button btnUpdateLinkCancel;
-    EditText editText1;
-    EditText editText2;
+public class UpdateFolderActivity extends Activity {
+    Button btnUpdateFolderOk;
+    Button btnUpdateFolderCancel;
+    EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-        setContentView(R.layout.activity_update_link);
+        setContentView(R.layout.activity_update_folder);
 
-        editText1 = (EditText)findViewById(R.id.edit_update_link_name);
-        editText2 = (EditText)findViewById(R.id.edit_update_link_url);
-        btnUpdateLinkOk = (Button)findViewById(R.id.btn_update_link_ok);
-        btnUpdateLinkCancel = (Button)findViewById(R.id.btn_update_link_cancel);
+        editText = (EditText)findViewById(R.id.edit_update_folder);
+        btnUpdateFolderOk = (Button)findViewById(R.id.btn_update_folder_ok);
+        btnUpdateFolderCancel = (Button)findViewById(R.id.btn_update_folder_cancel);
 
         Intent intent = getIntent();
+        final String beforeName = intent.getStringExtra("name");
+        editText.setText(beforeName);
 
-        editText1.setText(intent.getStringExtra("name"));
-        editText2.setText(intent.getStringExtra("url"));
-
-
-        btnUpdateLinkCancel.setOnClickListener(new View.OnClickListener() {
+        btnUpdateFolderCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent returnIntent = getIntent();
-
                 setResult(Activity.RESULT_CANCELED, returnIntent);
                 finish();
             }
         });
 
-        btnUpdateLinkOk.setOnClickListener(new View.OnClickListener() {
+        btnUpdateFolderOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent returnIntent = getIntent();
 
-                AppStatus.name = editText1.getText().toString();
-                AppStatus.url = editText2.getText().toString();
+                File f = new File(MainActivity.currentPath, beforeName);
+                //파일 이름 변경
+                f.renameTo(new File(MainActivity.currentPath, editText.getText().toString()));
 
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
